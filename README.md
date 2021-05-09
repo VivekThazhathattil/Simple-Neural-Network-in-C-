@@ -1,6 +1,6 @@
 # Neural Network in C++ from Scratch
 
-![png](res/error_decay)
+![png](res/error_decay.png)
 
 
 Barebones neural network with modular setup for hidden layer and neuron configuration. 
