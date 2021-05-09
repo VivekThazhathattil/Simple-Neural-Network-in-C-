@@ -1,0 +1,4 @@
+./src/neuron.cpp: In member function ‘double Neuron::sumDOW(const Layer&)’:
+./src/neuron.cpp:56:1: warning: no return statement in function returning non-void [-Wreturn-type]
+   56 | }
+      | ^
