@@ -1,4 +1,4 @@
-# SMARTCAB RL implementation in C++ from scratch
+# Neural Network in C++ from Scratch
 
 ![png](res/error_decay)
 
