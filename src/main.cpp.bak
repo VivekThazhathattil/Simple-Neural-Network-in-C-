@@ -64,8 +64,10 @@ int main(){
         	// Report how well the training is working, average over recent samples:
         	cout << "Net recent average error: " << net.getRecentAverageError() << endl;
 
+		render.showNeuralNetwork()
+
 		epData.push_back(trainingPass);
-		errData.push_back(net.getRecentAverageError());
+		errData.push_back(net.getCurrentError());
 	}
 
 	saveData(epData, errData, "/tmp/saveData.dat");

@@ -1,0 +1,16 @@
+This file lays down the foundation for the "game" in this code:
+
+Each circle represents a living body with its own neural network.
+All circles will have a random spawn position in the system.
+All circles will have the same size.
+The game ends when there is only one remaining circle.
+If there are more than one circles and the game doesn't end, check for timer expiration ( set 1 min). If expired, then the two most massive and 		most evasive circles in each category qualify for the next generation. 
+Mutations will happen to offspring within a threshold value. Parents of offspring are of similar types. So, the two massive circles act as 		parents for massive type offsprings and two evasive circles act as parents for evasive offsprings. There is no crossing between 		the types. [ Try it separately later]
+A circle is expires when it is engulfed by a bigger circle or when it touches the bounding walls
+A bigger circle can eat a smaller circle to get even bigger.
+A randomly generated number of pellets are scattered around the playing field
+Pellets when inside the circle expires and makes the circle in contact bigger.
+A circle is expected to evade its bigger counterpart and attack the smaller counterparts.
+Each circle has the same velocity at the spawn point. 
+As circle becomes bigger, its velocity decresases.
+As the circle becomes smaller, its velocity increases.

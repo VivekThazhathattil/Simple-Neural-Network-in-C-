@@ -1,0 +1,14 @@
+> Each circle takes in the following input:
+	* Location of the nearest three cells (If there isn't that many set the missing input to value more than the size of the bounding box.
+	* radius of the nearest three cells (if there aren't that many radii inputs, set the remaining radii to 0)
+	* shortest distance to all the walls ( Each wall is defined by a line. So a typical rectangular wall essentially mean four walls {for each sides})
+	* distance to the closest three pellets
+
+
+> Outputs for each circle is of the form:
+	* escape/evade mode : -1 for escape and +1 for evade (just for logging on screen) [useless as of now]
+	* a direction : this value will vary from -1 to 1 as well and its interpretation is as follows:
+		each circle has a pointing direction. Its velocity is something which it cannot control. 
+		
+
+Fitness function
