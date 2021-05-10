@@ -4,32 +4,38 @@
 */
 
 #include "net.h"
-#include "consts.h"
-#include <stdlib.h> // rand, srand
+#include "position.h"
+#include <cstdlib> // rand, srand
 #include <time.h> // time
 #include <vector>
+#include <iostream>
 
 class Body{
 	private:
 		float m_radius; // mass and radius used interchangebly
 		float m_velocity;
-		static double radiusIncreaseRate;
-		static double velocityDecreaseRate;
+		Position m_pos; // each body has a position
 		unsigned m_color[3]; // for storing the rgb values
 		unsigned m_bodyIdx; // to identify the body by its number
 		Net net; // neural network for the body
 
 		void setColor();
+		void setSpawnPosition(const Position &TL, const Position &BR);
 
 	public:
-		Body(const float vel, const float rad, const std::vector<unsigned> &topology);
+		Body(const float vel, const float rad, const std::vector<unsigned> &topology, const Position &TL, const Position &BR);
 		~Body();
 
-		void setVelocity(const float vel) { m_velocity = vel; }
-		float getVelocity() const { return m_velocity };
-		void setRadius(const float rad){ m_radius = rad; }
-		float getRadius() const { return m_radius};
+		static double radiusIncreaseRate;
+		static double velocityDecreaseRate;
 
+		void setVelocity(const float vel) { m_velocity = vel; }
+		float getVelocity() const { return m_velocity; }
+		void setRadius(const float rad){ m_radius = rad; }
+		float getRadius() const { return m_radius; }
+
+		Position getPosition() const { return m_pos; }
 		void updateBody(const float pelletWt);
 		void setBodyIdx(const float num) { m_bodyIdx = num; }
+		unsigned* getColor() { return m_color; }
 };

@@ -1,4 +1,8 @@
-./src/neuron.cpp: In member function ‘double Neuron::sumDOW(const Layer&)’:
-./src/neuron.cpp:56:1: warning: no return statement in function returning non-void [-Wreturn-type]
-   56 | }
-      | ^
+./src/body.cpp: In member function ‘void Body::setSpawnPosition(const Position&, const Position&)’:
+./src/body.cpp:30:40: warning: narrowing conversion of ‘((float)(rand()() % ((int)BR->Position::x - (int)TL->Position::x) + (int)TL->Position::x) + ((Body*)this)->Body::m_radius)’ from ‘float’ to ‘int’ [-Wnarrowing]
+   30 |  m_pos = { rand()%(BR.x - TL.x) + TL.x + m_radius,\
+      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~
+./src/body.cpp:31:39: warning: narrowing conversion of ‘((float)(rand()() % ((int)BR->Position::y - (int)TL->Position::y) + (int)TL->Position::y) + ((Body*)this)->Body::m_radius)’ from ‘float’ to ‘int’ [-Wnarrowing]
+   31 |           rand()%(BR.y - TL.y) + TL.y + m_radius };
+      |           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~
+make: *** [Makefile:6: build] Interrupt

@@ -1,3 +1,4 @@
+#pragma once 
 
 struct Position{
 	int x; // onscreen x coordinate
