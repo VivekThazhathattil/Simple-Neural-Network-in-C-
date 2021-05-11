@@ -37,6 +37,7 @@ class Body{
 		NearDet nearPelletLoc[3];
 		double nearBodyRadii [3];	
 		std::vector<unsigned> nearWallLoc;
+		bool aliveStatus;
 
 		void setVelocityMag(const float vel) { m_velocityMag = vel; }
 		float getVelocityMag() const { return m_velocityMag; }

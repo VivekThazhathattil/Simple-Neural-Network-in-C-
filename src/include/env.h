@@ -9,6 +9,7 @@
 #include "position.h"
 #include <cstdlib> /* srand, rand */
 #include <time.h> /* time */
+#include <iostream>
 
 class Env{
 	private:
@@ -39,8 +40,9 @@ class Env{
 		 * makes it easy to setup the env bound rectangle */
 		~Env();
 		bool checkGenExpiration();
-		void checkBodyDeath(const Position& TL, const Position &BR);
+		void getBodyInputs(const Position& TL, const Position &BR);
 		void checkPelletConsumption();
 		void changeBodyPosition(); 
 		void resetEnv();
+		void killOffBoundBodies();
 };

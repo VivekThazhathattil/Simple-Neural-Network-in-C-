@@ -1,6 +1,6 @@
 #include "include/env.h"
 
-double Env::initVel = 0.2;
+double Env::initVel = 0.5;
 double Env::initRad = 10;
 double Env::pelletWt = 2;
 
@@ -61,6 +61,7 @@ void Env::getWalls_stub(){
 
 bool Env::checkGenExpiration(){
 	/* gen expires if there is only one circle or if the time expires */
+//	std::cout << clockTime << " " << numAliveBodies << std::endl;
 	if(clockTime > expirationTime || numAliveBodies < 2){
 		clockTime = 0;
 		return true;
@@ -69,7 +70,7 @@ bool Env::checkGenExpiration(){
 	return false;
 }
 
-void Env::checkBodyDeath(const Position& TL, const Position &BR){
+void Env::getBodyInputs(const Position& TL, const Position &BR){
 	/* check if the body has died: either by collision with the wall or by getting consumed by other bodies */
 	for(unsigned i = 0; i < bodies.size(); ++i){
 		bodies[i].getNearest3BodyLoc(bodies, i);
@@ -113,4 +114,19 @@ void Env::resetEnv(){
 	clockTime = 0;	
 
 	numAliveBodies = numBodies;
+}
+
+void Env::killOffBoundBodies(){
+	/* change alive body status, remove the body from the boundary */
+	for(unsigned i = 0; i < bodies.size(); ++i){
+		if((bodies[i].getPosition().x > BR.x ||\
+		   bodies[i].getPosition().x < TL.x ||\
+		   bodies[i].getPosition().y > BR.y ||\
+		   bodies[i].getPosition().y < TL.y) &&\
+			bodies[i].aliveStatus){
+			bodies[i].aliveStatus = false;
+			--numAliveBodies;	
+		}
+
+	}	
 }

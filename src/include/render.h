@@ -4,6 +4,7 @@
 #include "consts.h"
 #include <iostream>
 #include <cmath>
+#include <string>
 
 class Render{
 	private:
@@ -18,10 +19,13 @@ class Render{
 		std::vector<sf::Vertex> m_destPelletVertex;
 		std::vector<sf::Vertex> m_srcWallVertex;
 		std::vector<sf::Vertex> m_destWallVertex;
+		std::vector<sf::Text> m_info;
+		sf::Font font;
 
 		bool showBodyLines;
 		bool showWallLines;
 		bool showPelletLines;
+		bool showInfo;
 		bool restartEnv;
 		
 		void updateState();
@@ -32,6 +36,7 @@ class Render{
 		void showNearBodyLines();
 		void showNearPelletLines();
 		void showNearWallLines();
+		void showDetailedInfo();
 
 		Position TL;
 		Position BR;

@@ -10,6 +10,7 @@ Body::Body(const float vel, const float rad, const std::vector<unsigned> &topolo
 	setRadius(rad);
 	setSpawnPosition(TL, BR);
 	setColor();
+	aliveStatus = true;
 }
 
 Body::~Body() {}
@@ -35,25 +36,27 @@ void Body::getNearest3BodyLoc(const std::vector<Body> &bodies, const unsigned cu
 		nearBodyLoc[i].dist = INT_MAX;// calcDist(bodies[i].getPosition().x - m_pos.x, bodies[i].getPosition().y - m_pos.y);
 		nearBodyLoc[i].x = -1;
 		nearBodyLoc[i].y = -1;
-		nearBodyLoc[i].idx = -1;
+		nearBodyLoc[i].idx = 0; // TODO:was -1 before, but segfault fricked me. will figure out later!
 	}
 
 	/* put all the distances: */
 	assert(bodies.size() > 3);
 	for (unsigned bodyIdx = 0; bodyIdx < bodies.size(); ++bodyIdx){
-		unsigned dist = calcDist( bodies[bodyIdx].getPosition().x - m_pos.x, bodies[bodyIdx].getPosition().y - m_pos.y);
-
-		for( unsigned j = 0; j < 3; ++j){
-			if ( dist <= nearBodyLoc[j].dist && bodyIdx != currBodyIdx){
-				for( unsigned k = 2; k > j; --k)
-					nearBodyLoc[k] = nearBodyLoc[k-1];
-				nearBodyLoc[j].dist = dist;
-				nearBodyLoc[j].x = bodies[bodyIdx].m_pos.x;
-				nearBodyLoc[j].y = bodies[bodyIdx].m_pos.y;
-				nearBodyLoc[j].idx = bodyIdx;
-				break;
-			}
-		}	
+		if(bodies[bodyIdx].aliveStatus){
+			unsigned dist = calcDist( bodies[bodyIdx].getPosition().x - m_pos.x, bodies[bodyIdx].getPosition().y - m_pos.y);
+	
+			for( unsigned j = 0; j < 3; ++j){
+				if ( dist <= nearBodyLoc[j].dist && bodyIdx != currBodyIdx){
+					for( unsigned k = 2; k > j; --k)
+						nearBodyLoc[k] = nearBodyLoc[k-1];
+					nearBodyLoc[j].dist = dist;
+					nearBodyLoc[j].x = bodies[bodyIdx].m_pos.x;
+					nearBodyLoc[j].y = bodies[bodyIdx].m_pos.y;
+					nearBodyLoc[j].idx = bodyIdx;
+					break;
+				}
+			}	
+		}
 	}
 }
 

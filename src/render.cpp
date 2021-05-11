@@ -12,10 +12,17 @@ Render::Render(const std::vector<unsigned> &topology, const unsigned numBodies,\
 	showWallLines = false;
 	showPelletLines = false;
 	restartEnv = false;
+	showInfo = false;
 
 	/* get the TL and BR */
 	this->TL = TL;
 	this->BR = BR;
+	
+	if (!font.loadFromFile("res/arial.ttf")){
+		std::cerr << "Unable to load font!" << std::endl;
+		exit(1);
+	}
+
 }
 
 Render::~Render() {}
@@ -44,7 +51,7 @@ void Render::createPellets(){
 }
 
 void Render::runSimulation(){
-	m_window.setPosition(sf::Vector2i(100,100));
+	m_window.setPosition(sf::Vector2i(200,50));
 	while(m_window.isOpen()){
 		sf::Event e;
 		while(m_window.pollEvent(e)){
@@ -61,6 +68,9 @@ void Render::runSimulation(){
 						showWallLines = !showWallLines;
 					else if (e.key.code == sf::Keyboard::R)
 						restartEnv = !restartEnv;
+					else if (e.key.code == sf::Keyboard::I){
+						showInfo = !showInfo;
+					}
 					break;
 			}	
 		}
@@ -75,17 +85,18 @@ void Render::updateState(){
 	 * if pellets consumed, remove them out of the screen
 	 * if two or more circles' centres coincide, remove the consumed circles.
 	 */
-//	if(env.checkGenExpiration()){
-//		env.resetEnv();
-//		resetRender();
-//	}
+	if(env.checkGenExpiration()){
+		env.resetEnv();
+		resetRender();
+	}
 
 	if(restartEnv){
 		restartEnv = !restartEnv;
 		env.resetEnv();
 		resetRender();
 	}
-	env.checkBodyDeath(TL,BR);
+	env.getBodyInputs(TL,BR);
+	env.killOffBoundBodies();
 	env.checkPelletConsumption();
 	env.changeBodyPosition();
 	updateCircles();
@@ -96,6 +107,8 @@ void Render::updateState(){
 		showNearWallLines();
 	if(showPelletLines)
 		showNearPelletLines();
+	if(showInfo)
+		showDetailedInfo();
 }
 
 void Render::drawNDisplay(){
@@ -138,8 +151,19 @@ void Render::drawNDisplay(){
 
 	/* draw circles */
 	for( unsigned circleIdx = 0; circleIdx < m_circles.size(); ++circleIdx)
-		m_window.draw( m_circles[ circleIdx ] );
+		if(env.bodies[circleIdx].aliveStatus)
+			m_window.draw( m_circles[ circleIdx ] );
 
+	/* draw info text */
+	if(showInfo){
+		unsigned textIdx = 0;
+		for(unsigned i = 0; i < env.bodies.size(); ++i){
+			if(env.bodies[i].aliveStatus){
+				m_window.draw(m_info[textIdx]);
+				++textIdx;
+			}	
+		}
+	}
 
 	m_window.display();
 }
@@ -165,11 +189,16 @@ void Render::showNearBodyLines(){
 
 	Position pos0, pos1;
 	for( unsigned i = 0; i < env.bodies.size(); ++i ){
-		pos0 = env.bodies[i].getPosition();
-		for( unsigned j = 0; j < 3; ++j){
-			pos1 = {env.bodies[i].nearBodyLoc[j].x, env.bodies[i].nearBodyLoc[j].y};
-			m_srcBodyVertex.push_back(sf::Vector2f(pos0.x,pos0.y));
-			m_destBodyVertex.push_back(sf::Vector2f(pos1.x, pos1.y));
+		if(env.bodies[i].aliveStatus){
+			pos0 = env.bodies[i].getPosition();
+			for( unsigned j = 0; j < 3; ++j){
+				/* check if the body being connected to is alive; if not don't draw connection line */
+				if(env.bodies[ env.bodies[i].nearBodyLoc[j].idx ].aliveStatus && env.bodies[i].nearBodyLoc[j].dist != INT_MAX){
+					pos1 = {env.bodies[i].nearBodyLoc[j].x, env.bodies[i].nearBodyLoc[j].y};
+					m_srcBodyVertex.push_back(sf::Vector2f(pos0.x,pos0.y));
+					m_destBodyVertex.push_back(sf::Vector2f(pos1.x, pos1.y));
+				}
+			}
 		}
 	}
 }
@@ -181,27 +210,29 @@ void Render::showNearWallLines(){
 
 	Position pos0, pos1;
 	for(unsigned i = 0; i < env.bodies.size(); ++i){
-		pos0 = env.bodies[i].getPosition();
+		if(env.bodies[i].aliveStatus){
+			pos0 = env.bodies[i].getPosition();
 	
-		/* left wall */
-		pos1 = {.x=TL.x, .y=pos0.y};
-		m_srcWallVertex.push_back(sf::Vector2f(pos0.x,pos0.y));
-		m_destWallVertex.push_back(sf::Vector2f(pos1.x,pos1.y));
+	 	       /* left wall */
+	 	       pos1 = {.x=TL.x, .y=pos0.y};
+	 	       m_srcWallVertex.push_back(sf::Vector2f(pos0.x,pos0.y));
+	 	       m_destWallVertex.push_back(sf::Vector2f(pos1.x,pos1.y));
 	
-		/* right wall */
-		pos1 = {.x = BR.x, .y = pos0.y};
-		m_srcWallVertex.push_back(sf::Vector2f(pos0.x,pos0.y));
-		m_destWallVertex.push_back(sf::Vector2f(pos1.x,pos1.y));
-		
-		/* top wall */
-		pos1 = {.x = pos0.x, .y = TL.y};
-		m_srcWallVertex.push_back(sf::Vector2f(pos0.x,pos0.y));
-		m_destWallVertex.push_back(sf::Vector2f(pos1.x,pos1.y));
+	 	       /* right wall */
+	 	       pos1 = {.x = BR.x, .y = pos0.y};
+	 	       m_srcWallVertex.push_back(sf::Vector2f(pos0.x,pos0.y));
+	 	       m_destWallVertex.push_back(sf::Vector2f(pos1.x,pos1.y));
+	 	       
+	 	       /* top wall */
+	 	       pos1 = {.x = pos0.x, .y = TL.y};
+	 	       m_srcWallVertex.push_back(sf::Vector2f(pos0.x,pos0.y));
+	 	       m_destWallVertex.push_back(sf::Vector2f(pos1.x,pos1.y));
 	
-		/* bottom wall */
-		pos1 = {.x = pos0.x,.y = BR.y};
-		m_srcWallVertex.push_back(sf::Vector2f(pos0.x,pos0.y));
-		m_destWallVertex.push_back(sf::Vector2f(pos1.x,pos1.y));
+	 	       /* bottom wall */
+	 	       pos1 = {.x = pos0.x,.y = BR.y};
+	 	       m_srcWallVertex.push_back(sf::Vector2f(pos0.x,pos0.y));
+	 	       m_destWallVertex.push_back(sf::Vector2f(pos1.x,pos1.y));
+		}	
 	}
 }
 
@@ -212,11 +243,13 @@ void Render::showNearPelletLines(){
 
 	Position pos0, pos1;
 	for( unsigned i = 0; i < env.bodies.size(); ++i ){
-		pos0 = env.bodies[i].getPosition();
-		for( unsigned j = 0; j < 3; ++j){
-			pos1 = {env.bodies[i].nearPelletLoc[j].x, env.bodies[i].nearPelletLoc[j].y};
-			m_srcPelletVertex.push_back(sf::Vector2f(pos0.x,pos0.y));
-			m_destPelletVertex.push_back(sf::Vector2f(pos1.x, pos1.y));
+		if(env.bodies[i].aliveStatus){
+			pos0 = env.bodies[i].getPosition();
+			for( unsigned j = 0; j < 3; ++j){
+				pos1 = {env.bodies[i].nearPelletLoc[j].x, env.bodies[i].nearPelletLoc[j].y};
+				m_srcPelletVertex.push_back(sf::Vector2f(pos0.x,pos0.y));
+				m_destPelletVertex.push_back(sf::Vector2f(pos1.x, pos1.y));
+			}
 		}
 	}
 }
@@ -226,4 +259,30 @@ void Render::updateCircles(){
 		Position pos = env.bodies[i].getPosition();
 		m_circles[i].setPosition(sf::Vector2f(pos.x, pos.y));
 	}
+}
+
+void Render::showDetailedInfo(){
+	sf::Text text;
+	text.setFont(font);
+	m_info.clear();
+	for (unsigned bodyIdx = 0; bodyIdx < env.bodies.size(); ++bodyIdx){
+		if(env.bodies[bodyIdx].aliveStatus){
+			/* velocity scaled to 100x below */
+			text.setString(\
+					"Position: (" + std::to_string((int)env.bodies[bodyIdx].getPosition().x) + ", " +\
+				       	std::to_string((int)env.bodies[bodyIdx].getPosition().y) +  ")\n" +\
+					"Velocity: (" + std::to_string((int)(env.bodies[bodyIdx].getVelocityMag()*\
+								env.bodies[bodyIdx].getVelocityDir().x*100)) + "," +\
+							std::to_string((int)(env.bodies[bodyIdx].getVelocityMag()*\
+								env.bodies[bodyIdx].getVelocityDir().y*100)) + ")\n" \
+					);
+			text.setPosition(sf::Vector2f(env.bodies[bodyIdx].getPosition().x,\
+						env.bodies[bodyIdx].getPosition().y));
+	//		std::cout << "(" << env.bodies[bodyIdx].getPosition().x << "," << env.bodies[bodyIdx].getPosition().y << ")\n";
+			text.setCharacterSize(12);
+			text.setFillColor(sf::Color::White);
+			m_info.push_back(text);
+		}	
+	}
+
 }
