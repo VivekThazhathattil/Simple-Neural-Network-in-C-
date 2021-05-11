@@ -13,14 +13,17 @@
 class Env{
 	private:
 		std::vector<unsigned> m_walls; // needs a better way to define the walls rather than with just unsigned 
+		unsigned clockTime;
+		unsigned expirationTime;
 
 		void setWalls(const Position &TL, const Position &BR); // this function sets up the walls in the env
 		void getWalls_stub();
-
+		void updateClockTime() { ++clockTime; }
 	public:
 		unsigned numPellets;
 		std::vector<Body> bodies;
 		std::vector<Position> pelletPos;
+		unsigned numAliveBodies;
 
 		static double initVel; // initial velocity of the bodies
 		static double initRad; // initial radius of the bodies
@@ -30,8 +33,9 @@ class Env{
 		/* TL = top left position and BR = botom right position 
 		 * makes it easy to setup the env bound rectangle */
 		~Env();
-		void checkGenExpiration();
+		bool checkGenExpiration();
 		void checkBodyDeath();
 		void checkPelletConsumption();
 		void changeBodyPosition(); 
+		void resetEnv();
 };

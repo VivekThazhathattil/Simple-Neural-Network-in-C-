@@ -1,2 +1,4 @@
 #define WINDOW_SIZE_X 500
 #define WINDOW_SIZE_Y 500
+
+#define EXPIRE_TIME 500

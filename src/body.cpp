@@ -27,7 +27,7 @@ void Body::setColor(){
 void Body::setSpawnPosition(const Position &TL, const Position &BR){
 	m_pos = { rand()%(BR.x - TL.x) + TL.x + m_radius,\
 	       	 rand()%(BR.y - TL.y) + TL.y + m_radius }; 
-	std::cout << rand() <<  " " << rand() << std::endl;
+//	std::cout << rand() <<  " " << rand() << std::endl;
 }
 
 void Body::getNearest3BodyLoc(const std::vector<Body> &bodies, const unsigned currBodyIdx){
@@ -70,7 +70,7 @@ void Body::getNearest3PelletsLoc(const std::vector<Position> &pelletPos, const u
 	assert(numPellets > 3);
 	for (unsigned pelletIdx = 0; pelletIdx < numPellets; ++pelletIdx){
 		unsigned dist = calcDist( pelletPos[pelletIdx].x - m_pos.x, pelletPos[pelletIdx].y - m_pos.y);
-		if (dist < nearPelletLoc[0].dist && currBodyIdx != pelletIdx){
+		if (dist < nearPelletLoc[0].dist){
 			nearPelletLoc[2] = nearPelletLoc[1];
 			nearPelletLoc[1] = nearPelletLoc[0];
 			nearPelletLoc[0].dist = dist;

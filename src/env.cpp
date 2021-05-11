@@ -26,7 +26,13 @@ Env::Env( const std::vector<unsigned> &topology, const unsigned numBodies, const
 		Position pos = {rand()%(BR.x - TL.x) + TL.x, rand()%(BR.y - TL.y) + TL.y};
 		pelletPos.push_back(pos);
 	}
-	
+
+	/* set expiration Time and clock Time */
+	expirationTime = EXPIRE_TIME;
+	clockTime = 0;	
+
+	/* set the number of alive bodies */
+	numAliveBodies = numBodies;
 }
 
 Env::~Env() {}
@@ -48,8 +54,14 @@ void Env::setWalls(const Position &TL, const Position &BR){
 void Env::getWalls_stub(){
 }
 
-void Env::checkGenExpiration(){
+bool Env::checkGenExpiration(){
 	/* gen expires if there is only one circle or if the time expires */
+	if(clockTime > expirationTime || numAliveBodies < 2){
+		clockTime = 0;
+		return true;
+	}	
+	updateClockTime();
+	return false;
 }
 
 void Env::checkBodyDeath(){
@@ -63,4 +75,7 @@ void Env::checkPelletConsumption(){
 
 void Env::changeBodyPosition(){
 	/* change each body position wrt to the output from the NN */
+}
+
+void Env::resetEnv(){
 }
