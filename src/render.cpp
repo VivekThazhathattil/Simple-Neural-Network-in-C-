@@ -58,16 +58,23 @@ void Render::updateState(){
 }
 
 void Render::drawNDisplay(){
-	/* draw circles */
-	for( unsigned circleIdx = 0; circleIdx < m_circles.size(); ++circleIdx)
-		m_window.draw( m_circles[ circleIdx ] );
-
 	/* draw pellets */
 	for( unsigned pelletIdx = 0; pelletIdx < m_pellets.size(); ++pelletIdx)
 		m_window.draw( m_pellets[ pelletIdx ] );
 
-	for( unsigned lineIdx = 0; lineIdx < m_lines.size(); ++lineIdx)
-		m_window.draw(m_lines[ lineIdx ]);
+	/* draw connection lines */
+	for( unsigned lineIdx = 0; lineIdx < m_srcVertex.size(); ++lineIdx){
+		sf::Vertex vertices[2] = {\
+			m_srcVertex[lineIdx],\
+			m_destVertex[lineIdx]\
+		};
+		m_window.draw(vertices ,2, sf::Lines);
+	}
+
+	/* draw circles */
+	for( unsigned circleIdx = 0; circleIdx < m_circles.size(); ++circleIdx)
+		m_window.draw( m_circles[ circleIdx ] );
+
 
 	m_window.display();
 }
@@ -76,22 +83,40 @@ void Render::resetRender(){
 }
 
 void Render::showNearBodyLines(){
-	/* get lines from bodies */
-	m_lines.clear();
-	sf::RectangleShape line;
+//	/* get lines from bodies */
+//	m_lines.clear();
+//	sf::RectangleShape line;
+//	Position pos0, pos1;
+//	for( unsigned i = 0; i < env.bodies.size(); ++i){
+//		pos0 = env.bodies[i].getPosition();
+//		for(unsigned j = 0; j < 3; ++j){
+//			if( env.bodies[i].nearBodyLoc[j].dist != INT_MAX){
+//				pos1 = {(int)env.bodies[i].nearBodyLoc[j].x, (int)env.bodies[i].nearBodyLoc[j].y};
+//				line.setPosition(sf::Vector2f(pos0.x, pos0.y));
+//	//			line.setOrigin(sf::Vector2f(0.5*(pos1.x - pos0.x), 0.5*(pos1.y - pos0.y)));
+//				line.setSize(sf::Vector2f(env.bodies[i].nearBodyLoc[j].dist, 1));
+//	//			std::cout << "nearBodyLoc Dist: " << env.bodies[i].nearBodyLoc[j].dist << std::endl;
+//				float rad_rot = atan( float(pos1.y-pos0.y) / (pos1.x - pos0.x));
+//				line.setRotation(rad_rot*180/M_PI);
+//				unsigned *colors = env.bodies[i].getColor();
+//				line.setFillColor(sf::Color(colors[0], colors[1], colors[2]));
+//				m_lines.push_back(line);
+//			}
+//		}
+//	}
+//	/* get lines from walls */
+//	/* get lines from pellets */
+//
+	m_srcVertex.clear();
+	m_destVertex.clear();
+
 	Position pos0, pos1;
-	for( unsigned i = 0; i < env.bodies.size(); ++i){
+	for( unsigned i = 0; i < env.bodies.size(); ++i ){
 		pos0 = env.bodies[i].getPosition();
-		for(unsigned j = 0; j < 3; ++j){
-			pos1 = {(int)env.bodies[i].nearBodyLoc[j].x, (int)env.bodies[i].nearBodyLoc[j].y};
-			line.setPosition(sf::Vector2f(pos0.x, pos0.y));
-			line.setOrigin(sf::Vector2f(0.5*(pos1.x - pos0.x), 0.5*(pos1.y - pos0.y)));
-			line.setSize(sf::Vector2f(env.bodies[i].nearBodyLoc[j].dist, 1));
-			float rad_rot = atan( (pos1.y-pos0.y) / (pos1.x - pos0.x));
-			line.setRotation(rad_rot*180/M_PI);
-			m_lines.push_back(line);
+		for( unsigned j = 0; j < 3; ++j){
+			pos1 = {env.bodies[i].nearBodyLoc[j].x, env.bodies[i].nearBodyLoc[j].y};
+			m_srcVertex.push_back(sf::Vector2f(pos0.x,pos0.y));
+			m_destVertex.push_back(sf::Vector2f(pos1.x, pos1.y));
 		}
 	}
-	/* get lines from walls */
-	/* get lines from pellets */
 }

@@ -10,7 +10,7 @@ int main(){
 
 	unsigned numBodies = 30;
 	Position TL = {0, 0};
-	Position BR = {500, 500};
+	Position BR = {700,700};
 
 	Render r(topology, numBodies, TL, BR);
 	r.runSimulation();

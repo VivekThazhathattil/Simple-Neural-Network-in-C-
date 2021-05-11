@@ -9,6 +9,7 @@
 #include <time.h> // time
 #include <vector>
 #include <iostream>
+#include <cmath>
 #include <limits.h>
 
 class Body{

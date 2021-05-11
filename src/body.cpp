@@ -25,8 +25,8 @@ void Body::setColor(){
 }
 
 void Body::setSpawnPosition(const Position &TL, const Position &BR){
-	m_pos = { rand()%(BR.x - TL.x) + TL.x + m_radius,\
-	       	 rand()%(BR.y - TL.y) + TL.y + m_radius }; 
+	m_pos = { rand()%(BR.x - TL.x) + TL.x ,\
+	       	 rand()%(BR.y - TL.y) + TL.y}; 
 //	std::cout << rand() <<  " " << rand() << std::endl;
 }
 
@@ -36,25 +36,30 @@ void Body::getNearest3BodyLoc(const std::vector<Body> &bodies, const unsigned cu
 		nearBodyLoc[i].dist = INT_MAX;// calcDist(bodies[i].getPosition().x - m_pos.x, bodies[i].getPosition().y - m_pos.y);
 		nearBodyLoc[i].x = -1;
 		nearBodyLoc[i].y = -1;
+		nearBodyLoc[i].idx = -1;
 	}
 
 	/* put all the distances: */
 	assert(bodies.size() > 3);
 	for (unsigned bodyIdx = 0; bodyIdx < bodies.size(); ++bodyIdx){
 		unsigned dist = calcDist( bodies[bodyIdx].getPosition().x - m_pos.x, bodies[bodyIdx].getPosition().y - m_pos.y);
-		if (dist < nearBodyLoc[0].dist && currBodyIdx != bodyIdx){
-			nearBodyLoc[2] = nearBodyLoc[1];
-			nearBodyLoc[1] = nearBodyLoc[0];
-			nearBodyLoc[0].dist = dist;
-			nearBodyLoc[0].x = bodies[bodyIdx].m_pos.x;
-			nearBodyLoc[0].y = bodies[bodyIdx].m_pos.y;
-			nearBodyLoc[0].idx = bodyIdx;
-		}
+
+		for( unsigned j = 0; j < 3; ++j){
+			if ( dist <= nearBodyLoc[j].dist && bodyIdx != currBodyIdx){
+				for( unsigned k = 2; k > j; --k)
+					nearBodyLoc[k] = nearBodyLoc[k-1];
+				nearBodyLoc[j].dist = dist;
+				nearBodyLoc[j].x = bodies[bodyIdx].m_pos.x;
+				nearBodyLoc[j].y = bodies[bodyIdx].m_pos.y;
+				nearBodyLoc[j].idx = bodyIdx;
+				break;
+			}
+		}	
 	}
 }
 
 unsigned Body::calcDist(const unsigned m, const unsigned n){
-	return m*m + n*n;	
+	return int(sqrt(m*m + n*n));	
 }
 
 void Body::getNearest3PelletsLoc(const std::vector<Position> &pelletPos, const unsigned numPellets){

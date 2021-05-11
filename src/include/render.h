@@ -11,7 +11,8 @@ class Render{
 		sf::RenderWindow m_window;
 		std::vector<sf::CircleShape> m_circles;
 		std::vector<sf::CircleShape> m_pellets;
-		std::vector<sf::RectangleShape> m_lines;
+		std::vector<sf::Vertex> m_srcVertex;
+		std::vector<sf::Vertex> m_destVertex;
 
 		void updateState();
 		void drawNDisplay();

@@ -66,6 +66,9 @@ bool Env::checkGenExpiration(){
 
 void Env::checkBodyDeath(){
 	/* check if the body has died: either by collision with the wall or by getting consumed by other bodies */
+	for(unsigned i = 0; i < bodies.size(); ++i){
+		bodies[i].getNearest3BodyLoc(bodies, i);
+	}
 }
 
 void Env::checkPelletConsumption(){
