@@ -34,7 +34,7 @@ class Env{
 		 * makes it easy to setup the env bound rectangle */
 		~Env();
 		bool checkGenExpiration();
-		void checkBodyDeath();
+		void checkBodyDeath(const Position& TL, const Position &BR);
 		void checkPelletConsumption();
 		void changeBodyPosition(); 
 		void resetEnv();

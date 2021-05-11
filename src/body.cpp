@@ -29,9 +29,7 @@ void Body::setSpawnPosition(const Position &TL, const Position &BR){
 	       	 rand()%(BR.y - TL.y) + TL.y}; 
 //	std::cout << rand() <<  " " << rand() << std::endl;
 }
-
-void Body::getNearest3BodyLoc(const std::vector<Body> &bodies, const unsigned currBodyIdx){
-	/* set all dist to 0 initially */
+void Body::getNearest3BodyLoc(const std::vector<Body> &bodies, const unsigned currBodyIdx){ /* set all dist to 0 initially */
 	for(unsigned i = 0; i < 3; ++i){
 		nearBodyLoc[i].dist = INT_MAX;// calcDist(bodies[i].getPosition().x - m_pos.x, bodies[i].getPosition().y - m_pos.y);
 		nearBodyLoc[i].x = -1;
@@ -63,26 +61,27 @@ unsigned Body::calcDist(const unsigned m, const unsigned n){
 }
 
 void Body::getNearest3PelletsLoc(const std::vector<Position> &pelletPos, const unsigned numPellets){
-	/* set all dist to 0 initially */
 	for(unsigned i = 0; i < 3; ++i){
 		nearPelletLoc[i].dist = INT_MAX;// calcDist(bodies[i].getPosition().x - m_pos.x, bodies[i].getPosition().y - m_pos.y);
 		nearPelletLoc[i].x = -1;
 		nearPelletLoc[i].y = -1;
-		nearPelletLoc[i].idx = i;
+		nearPelletLoc[i].idx = -1;
 	}
 
 	/* put all the distances: */
 	assert(numPellets > 3);
 	for (unsigned pelletIdx = 0; pelletIdx < numPellets; ++pelletIdx){
 		unsigned dist = calcDist( pelletPos[pelletIdx].x - m_pos.x, pelletPos[pelletIdx].y - m_pos.y);
-		if (dist < nearPelletLoc[0].dist){
-			nearPelletLoc[2] = nearPelletLoc[1];
-			nearPelletLoc[1] = nearPelletLoc[0];
-			nearPelletLoc[0].dist = dist;
-			nearPelletLoc[0].x = pelletPos[pelletIdx].x;
-			nearPelletLoc[0].y = pelletPos[pelletIdx].y;
-			nearPelletLoc[0].idx = pelletIdx;
-		}
+		for( unsigned j = 0; j < 3; ++j){
+			if ( dist <= nearPelletLoc[j].dist){
+				for( unsigned k = 2; k > j; --k)
+					nearPelletLoc[k] = nearPelletLoc[k-1];
+				nearPelletLoc[j].dist = dist;
+				nearPelletLoc[j].x = pelletPos[pelletIdx].x;
+				nearPelletLoc[j].y = pelletPos[pelletIdx].y;
+				break;
+			}
+		}	
 	}
 }
 

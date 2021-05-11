@@ -1,1 +1,5 @@
-make: *** [Makefile:6: build] Interrupt
+./src/render.cpp: In member function ‘void Render::showNearWallLines()’:
+./src/render.cpp:136:20: error: ‘i’ was not declared in this scope
+  136 |  pos0 = env.bodies[i].getPosition();
+      |                    ^
+make: *** [Makefile:2: build] Error 1

@@ -11,13 +11,28 @@ class Render{
 		sf::RenderWindow m_window;
 		std::vector<sf::CircleShape> m_circles;
 		std::vector<sf::CircleShape> m_pellets;
-		std::vector<sf::Vertex> m_srcVertex;
-		std::vector<sf::Vertex> m_destVertex;
 
+		std::vector<sf::Vertex> m_srcBodyVertex;
+		std::vector<sf::Vertex> m_destBodyVertex;
+		std::vector<sf::Vertex> m_srcPelletVertex;
+		std::vector<sf::Vertex> m_destPelletVertex;
+		std::vector<sf::Vertex> m_srcWallVertex;
+		std::vector<sf::Vertex> m_destWallVertex;
+
+		bool showBodyLines;
+		bool showWallLines;
+		bool showPelletLines;
+		
 		void updateState();
 		void drawNDisplay();
 		void resetRender();
+
 		void showNearBodyLines();
+		void showNearPelletLines();
+		void showNearWallLines();
+
+		Position TL;
+		Position BR;
 	public:
 		Render(const std::vector<unsigned> &topology, const unsigned numBodies,\
 	       			const Position &TL, const Position &BR);

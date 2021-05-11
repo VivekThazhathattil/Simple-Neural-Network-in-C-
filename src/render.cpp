@@ -22,6 +22,15 @@ Render::Render(const std::vector<unsigned> &topology, const unsigned numBodies,\
 		m_pellets.back().setOrigin(sf::Vector2f(env.pelletWt, env.pelletWt));
 		m_pellets.back().setPosition(sf::Vector2f(env.pelletPos[pelletIdx].x, env.pelletPos[pelletIdx].y));
 	}
+
+	/* flags for showing connection lines*/
+		showBodyLines = false;
+		showWallLines = false;
+		showPelletLines = false;
+
+	/* get the TL and BR */
+		this->TL = TL;
+		this->BR = BR;
 }
 Render::~Render() {}
 
@@ -33,6 +42,14 @@ void Render::runSimulation(){
 			switch(e.type){
 				case sf::Event::Closed:
 					m_window.close();
+					break;
+				case sf::Event::KeyPressed:
+					if( e.key.code == sf::Keyboard::B )
+						showBodyLines = !showBodyLines;
+					else if (e.key.code == sf::Keyboard::P)
+						showPelletLines = !showPelletLines;
+					else if (e.key.code == sf::Keyboard::W)
+						showWallLines = !showWallLines;
 					break;
 			}	
 		}
@@ -51,10 +68,15 @@ void Render::updateState(){
 		env.resetEnv();
 		resetRender();
 	}
-	env.checkBodyDeath();
+	env.checkBodyDeath(TL,BR);
 	env.checkPelletConsumption();
 	env.changeBodyPosition();
-	showNearBodyLines();
+	if(showBodyLines)
+		showNearBodyLines();
+	if(showWallLines)
+		showNearWallLines();
+	if(showPelletLines)
+		showNearPelletLines();
 }
 
 void Render::drawNDisplay(){
@@ -62,13 +84,37 @@ void Render::drawNDisplay(){
 	for( unsigned pelletIdx = 0; pelletIdx < m_pellets.size(); ++pelletIdx)
 		m_window.draw( m_pellets[ pelletIdx ] );
 
-	/* draw connection lines */
-	for( unsigned lineIdx = 0; lineIdx < m_srcVertex.size(); ++lineIdx){
-		sf::Vertex vertices[2] = {\
-			m_srcVertex[lineIdx],\
-			m_destVertex[lineIdx]\
-		};
-		m_window.draw(vertices ,2, sf::Lines);
+	/* draw body connection lines */
+	if(showBodyLines){
+		for( unsigned lineIdx = 0; lineIdx < m_srcBodyVertex.size(); ++lineIdx){
+			sf::Vertex vertices[2] = {\
+				m_srcBodyVertex[lineIdx],\
+				m_destBodyVertex[lineIdx]\
+			};
+			m_window.draw(vertices ,2, sf::Lines);
+		}
+	}
+
+	/* draw wall connection lines */
+	if(showWallLines){
+		for( unsigned lineIdx = 0; lineIdx < m_srcWallVertex.size(); ++lineIdx){
+			sf::Vertex vertices[2] = {\
+				m_srcWallVertex[lineIdx],\
+				m_destWallVertex[lineIdx]\
+			};
+			m_window.draw(vertices ,2, sf::Lines);
+		}
+	}
+
+	/* draw pellet connection lines*/
+	if(showPelletLines){
+		for( unsigned lineIdx = 0; lineIdx < m_srcPelletVertex.size(); ++lineIdx){
+			sf::Vertex vertices[2] = {\
+				m_srcPelletVertex[lineIdx],\
+				m_destPelletVertex[lineIdx]\
+			};
+			m_window.draw(vertices ,2, sf::Lines);
+		}
 	}
 
 	/* draw circles */
@@ -83,40 +129,64 @@ void Render::resetRender(){
 }
 
 void Render::showNearBodyLines(){
-//	/* get lines from bodies */
-//	m_lines.clear();
-//	sf::RectangleShape line;
-//	Position pos0, pos1;
-//	for( unsigned i = 0; i < env.bodies.size(); ++i){
-//		pos0 = env.bodies[i].getPosition();
-//		for(unsigned j = 0; j < 3; ++j){
-//			if( env.bodies[i].nearBodyLoc[j].dist != INT_MAX){
-//				pos1 = {(int)env.bodies[i].nearBodyLoc[j].x, (int)env.bodies[i].nearBodyLoc[j].y};
-//				line.setPosition(sf::Vector2f(pos0.x, pos0.y));
-//	//			line.setOrigin(sf::Vector2f(0.5*(pos1.x - pos0.x), 0.5*(pos1.y - pos0.y)));
-//				line.setSize(sf::Vector2f(env.bodies[i].nearBodyLoc[j].dist, 1));
-//	//			std::cout << "nearBodyLoc Dist: " << env.bodies[i].nearBodyLoc[j].dist << std::endl;
-//				float rad_rot = atan( float(pos1.y-pos0.y) / (pos1.x - pos0.x));
-//				line.setRotation(rad_rot*180/M_PI);
-//				unsigned *colors = env.bodies[i].getColor();
-//				line.setFillColor(sf::Color(colors[0], colors[1], colors[2]));
-//				m_lines.push_back(line);
-//			}
-//		}
-//	}
-//	/* get lines from walls */
-//	/* get lines from pellets */
-//
-	m_srcVertex.clear();
-	m_destVertex.clear();
+	/* get lines from nearby bodies */
+	m_srcBodyVertex.clear();
+	m_destBodyVertex.clear();
 
 	Position pos0, pos1;
 	for( unsigned i = 0; i < env.bodies.size(); ++i ){
 		pos0 = env.bodies[i].getPosition();
 		for( unsigned j = 0; j < 3; ++j){
 			pos1 = {env.bodies[i].nearBodyLoc[j].x, env.bodies[i].nearBodyLoc[j].y};
-			m_srcVertex.push_back(sf::Vector2f(pos0.x,pos0.y));
-			m_destVertex.push_back(sf::Vector2f(pos1.x, pos1.y));
+			m_srcBodyVertex.push_back(sf::Vector2f(pos0.x,pos0.y));
+			m_destBodyVertex.push_back(sf::Vector2f(pos1.x, pos1.y));
+		}
+	}
+}
+
+void Render::showNearWallLines(){
+	/* get lines from walls */
+	m_srcWallVertex.clear();
+	m_destWallVertex.clear();
+
+	Position pos0, pos1;
+	for(unsigned i = 0; i < env.bodies.size(); ++i){
+		pos0 = env.bodies[i].getPosition();
+	
+		/* left wall */
+		pos1 = {.x=TL.x, .y=pos0.y};
+		m_srcWallVertex.push_back(sf::Vector2f(pos0.x,pos0.y));
+		m_destWallVertex.push_back(sf::Vector2f(pos1.x,pos1.y));
+	
+		/* right wall */
+		pos1 = {.x = BR.x, .y = pos0.y};
+		m_srcWallVertex.push_back(sf::Vector2f(pos0.x,pos0.y));
+		m_destWallVertex.push_back(sf::Vector2f(pos1.x,pos1.y));
+		
+		/* top wall */
+		pos1 = {.x = pos0.x, .y = TL.y};
+		m_srcWallVertex.push_back(sf::Vector2f(pos0.x,pos0.y));
+		m_destWallVertex.push_back(sf::Vector2f(pos1.x,pos1.y));
+	
+		/* bottom wall */
+		pos1 = {.x = pos0.x,.y = BR.y};
+		m_srcWallVertex.push_back(sf::Vector2f(pos0.x,pos0.y));
+		m_destWallVertex.push_back(sf::Vector2f(pos1.x,pos1.y));
+	}
+}
+
+void Render::showNearPelletLines(){
+	/* get lines from pellets */
+	m_srcPelletVertex.clear();
+	m_destPelletVertex.clear();
+
+	Position pos0, pos1;
+	for( unsigned i = 0; i < env.bodies.size(); ++i ){
+		pos0 = env.bodies[i].getPosition();
+		for( unsigned j = 0; j < 3; ++j){
+			pos1 = {env.bodies[i].nearPelletLoc[j].x, env.bodies[i].nearPelletLoc[j].y};
+			m_srcPelletVertex.push_back(sf::Vector2f(pos0.x,pos0.y));
+			m_destPelletVertex.push_back(sf::Vector2f(pos1.x, pos1.y));
 		}
 	}
 }

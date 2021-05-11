@@ -64,10 +64,13 @@ bool Env::checkGenExpiration(){
 	return false;
 }
 
-void Env::checkBodyDeath(){
+void Env::checkBodyDeath(const Position& TL, const Position &BR){
 	/* check if the body has died: either by collision with the wall or by getting consumed by other bodies */
 	for(unsigned i = 0; i < bodies.size(); ++i){
 		bodies[i].getNearest3BodyLoc(bodies, i);
+		bodies[i].getNearest3PelletsLoc(pelletPos, numPellets);
+		bodies[i].getNearest3BodyRadii(bodies);
+		bodies[i].getShortestDistanceToWalls(TL, BR);
 	}
 }
 
