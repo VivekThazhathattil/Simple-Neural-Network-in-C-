@@ -9,6 +9,7 @@
 #include <time.h> // time
 #include <vector>
 #include <iostream>
+#include <limits.h>
 
 class Body{
 	private:
@@ -21,6 +22,7 @@ class Body{
 
 		void setColor();
 		void setSpawnPosition(const Position &TL, const Position &BR);
+		unsigned calcDist(const unsigned m, const unsigned n);
 
 	public:
 		Body(const float vel, const float rad, const std::vector<unsigned> &topology, const Position &TL, const Position &BR);
@@ -28,6 +30,11 @@ class Body{
 
 		static double radiusIncreaseRate;
 		static double velocityDecreaseRate;
+
+		NearDet nearBodyLoc[3];
+		NearDet nearPelletLoc[3];
+		double nearBodyRadii [3];	
+		std::vector<unsigned> nearWallLoc;
 
 		void setVelocity(const float vel) { m_velocity = vel; }
 		float getVelocity() const { return m_velocity; }
@@ -37,5 +44,10 @@ class Body{
 		Position getPosition() const { return m_pos; }
 		void updateBody(const float pelletWt);
 		void setBodyIdx(const float num) { m_bodyIdx = num; }
-		unsigned* getColor() { return m_color; }
+		unsigned* getColor() const { return m_color; }
+
+		void getNearest3BodyLoc();
+		void getNearest3PelletsLoc();
+		void getNearest3BodyRadii();
+		void getShortestDistanceToWalls();
 };

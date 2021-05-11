@@ -30,4 +30,8 @@ class Env{
 		/* TL = top left position and BR = botom right position 
 		 * makes it easy to setup the env bound rectangle */
 		~Env();
+		void checkGenExpiration();
+		void checkBodyDeath();
+		void checkPelletConsumption();
+		void changeBodyPosition(); 
 };

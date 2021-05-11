@@ -47,3 +47,20 @@ void Env::setWalls(const Position &TL, const Position &BR){
 
 void Env::getWalls_stub(){
 }
+
+void Env::checkGenExpiration(){
+	/* gen expires if there is only one circle or if the time expires */
+}
+
+void Env::checkBodyDeath(){
+	/* check if the body has died: either by collision with the wall or by getting consumed by other bodies */
+}
+
+void Env::checkPelletConsumption(){
+	/* check if the pellets have been consumed by the bodies; once fully consumed, the pellets never regenerate */
+	/* we do not delete the pellets, rather we set the pellet position of consumed pellets to INT_MAX */
+}
+
+void Env::changeBodyPosition(){
+	/* change each body position wrt to the output from the NN */
+}
