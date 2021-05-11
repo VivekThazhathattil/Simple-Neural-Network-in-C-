@@ -4,8 +4,25 @@ Render::Render(const std::vector<unsigned> &topology, const unsigned numBodies,\
 	       	const Position &TL, const Position &BR) : m_window(sf::RenderWindow(sf::VideoMode(WINDOW_SIZE_X, WINDOW_SIZE_Y),\
 			       	"NEAT Illustration", sf::Style::Close)), env(topology, numBodies, TL, BR){
 	
+	createCircles();
+	createPellets();
+
+	/* flags for showing connection lines*/
+	showBodyLines = false;
+	showWallLines = false;
+	showPelletLines = false;
+	restartEnv = false;
+
+	/* get the TL and BR */
+	this->TL = TL;
+	this->BR = BR;
+}
+
+Render::~Render() {}
+
+void Render::createCircles(){
 	/* create circles */
-	for (unsigned bodyIdx = 0; bodyIdx < numBodies; ++bodyIdx){
+	for (unsigned bodyIdx = 0; bodyIdx < env.numBodies; ++bodyIdx){
 		m_circles.push_back(sf::CircleShape(env.initRad));
 		unsigned *colors = env.bodies[ bodyIdx ].getColor();
 		m_circles.back().setFillColor(sf::Color(colors[0], colors[1], colors[2]));
@@ -14,7 +31,9 @@ Render::Render(const std::vector<unsigned> &topology, const unsigned numBodies,\
 //		std::cout << bodyIdx << std::endl;
 		m_circles.back().setPosition(sf::Vector2f(pos.x, pos.y));
 	}
+}
 
+void Render::createPellets(){
 	/* create pellets */
 	for (unsigned pelletIdx = 0; pelletIdx < env.numPellets; ++pelletIdx){
 		m_pellets.push_back(sf::CircleShape(env.pelletWt));
@@ -22,17 +41,7 @@ Render::Render(const std::vector<unsigned> &topology, const unsigned numBodies,\
 		m_pellets.back().setOrigin(sf::Vector2f(env.pelletWt, env.pelletWt));
 		m_pellets.back().setPosition(sf::Vector2f(env.pelletPos[pelletIdx].x, env.pelletPos[pelletIdx].y));
 	}
-
-	/* flags for showing connection lines*/
-		showBodyLines = false;
-		showWallLines = false;
-		showPelletLines = false;
-
-	/* get the TL and BR */
-		this->TL = TL;
-		this->BR = BR;
 }
-Render::~Render() {}
 
 void Render::runSimulation(){
 	m_window.setPosition(sf::Vector2i(100,100));
@@ -50,6 +59,8 @@ void Render::runSimulation(){
 						showPelletLines = !showPelletLines;
 					else if (e.key.code == sf::Keyboard::W)
 						showWallLines = !showWallLines;
+					else if (e.key.code == sf::Keyboard::R)
+						restartEnv = !restartEnv;
 					break;
 			}	
 		}
@@ -64,7 +75,13 @@ void Render::updateState(){
 	 * if pellets consumed, remove them out of the screen
 	 * if two or more circles' centres coincide, remove the consumed circles.
 	 */
-	if(env.checkGenExpiration()){
+//	if(env.checkGenExpiration()){
+//		env.resetEnv();
+//		resetRender();
+//	}
+
+	if(restartEnv){
+		restartEnv = !restartEnv;
 		env.resetEnv();
 		resetRender();
 	}
@@ -126,6 +143,17 @@ void Render::drawNDisplay(){
 }
 
 void Render::resetRender(){
+	m_circles.clear();
+	m_pellets.clear();
+	m_srcBodyVertex.clear();
+	m_destBodyVertex.clear();
+	m_srcPelletVertex.clear();
+	m_destPelletVertex.clear();
+	m_srcWallVertex.clear();
+	m_destWallVertex.clear();
+
+	createCircles();
+	createPellets();
 }
 
 void Render::showNearBodyLines(){

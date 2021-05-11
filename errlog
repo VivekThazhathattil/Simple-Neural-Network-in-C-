@@ -1,5 +1,5 @@
-./src/render.cpp: In member function ‘void Render::showNearWallLines()’:
-./src/render.cpp:136:20: error: ‘i’ was not declared in this scope
-  136 |  pos0 = env.bodies[i].getPosition();
-      |                    ^
+./src/render.cpp: In member function ‘void Render::createCircles()’:
+./src/render.cpp:25:39: error: ‘numBodies’ was not declared in this scope
+   25 |  for (unsigned bodyIdx = 0; bodyIdx < numBodies; ++bodyIdx){
+      |                                       ^~~~~~~~~
 make: *** [Makefile:2: build] Error 1

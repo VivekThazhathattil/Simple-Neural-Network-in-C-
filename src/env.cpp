@@ -33,6 +33,11 @@ Env::Env( const std::vector<unsigned> &topology, const unsigned numBodies, const
 
 	/* set the number of alive bodies */
 	numAliveBodies = numBodies;
+
+	this->topology = topology;
+	this->TL = TL;
+	this->BR = BR;
+	this->numBodies = numBodies;
 }
 
 Env::~Env() {}
@@ -84,4 +89,22 @@ void Env::changeBodyPosition(){
 }
 
 void Env::resetEnv(){
+	/* this function should refill the pellets, set alive all the bodies, assign all of 'em random positions */
+	unsigned numBodies = bodies.size();
+	bodies.clear();
+	for (unsigned bodyIdx = 0; bodyIdx < numBodies; ++bodyIdx){
+		bodies.push_back(Body(initVel, initRad, topology, TL, BR));	
+	}
+
+
+	pelletPos.clear();
+	numPellets = rand()%(101 - numBodies) + numBodies; /* number of pellets atleast the same as number of bodies */
+	for(unsigned pelletNum = 0; pelletNum < numPellets; ++pelletNum){
+		Position pos = {rand()%(BR.x - TL.x) + TL.x, rand()%(BR.y - TL.y) + TL.y};
+		pelletPos.push_back(pos);
+	}
+
+	clockTime = 0;	
+
+	numAliveBodies = numBodies;
 }

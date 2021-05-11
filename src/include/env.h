@@ -29,6 +29,11 @@ class Env{
 		static double initRad; // initial radius of the bodies
 		static double pelletWt; // for now, let it be constant. Later we can see how the variation in pelletWt affects the system
 
+		std::vector<unsigned> topology;
+		Position TL;
+		Position BR;
+		unsigned numBodies;
+
 		Env(const std::vector<unsigned> &topology, const unsigned numBodies, const Position &TL, const Position &BR);
 		/* TL = top left position and BR = botom right position 
 		 * makes it easy to setup the env bound rectangle */

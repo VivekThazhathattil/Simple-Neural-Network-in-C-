@@ -100,6 +100,7 @@ void Body::getShortestDistanceToWalls(const Position &TL, const Position &BR){
 	nearWallLoc.push_back(BR.y - m_pos.y);
 
 	for(unsigned i = 0; i < nearWallLoc.size(); ++i){
+		//std::cout << "wall loc : " << nearWallLoc[i] << std::endl;
 		assert(nearWallLoc[i] > 0);
 	}	
 }

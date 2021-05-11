@@ -22,6 +22,7 @@ class Render{
 		bool showBodyLines;
 		bool showWallLines;
 		bool showPelletLines;
+		bool restartEnv;
 		
 		void updateState();
 		void drawNDisplay();
@@ -33,6 +34,9 @@ class Render{
 
 		Position TL;
 		Position BR;
+
+		void createCircles();
+		void createPellets();
 	public:
 		Render(const std::vector<unsigned> &topology, const unsigned numBodies,\
 	       			const Position &TL, const Position &BR);
