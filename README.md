@@ -1,8 +1,8 @@
-# Neural Network in C++ from Scratch
+# NEAT in C++ from Scratch
 
 Barebones neural network with modular setup for hidden layer and neuron configuration. 
 
-Adapted from [Dave Miller's blog]( http://www.millermattson.com/dave/?p=54)
+Neural Network construction adapted from [Dave Miller's blog]( http://www.millermattson.com/dave/?p=54)
 
 <img src="res/error_decay.png" width="400" height="400"/>
 

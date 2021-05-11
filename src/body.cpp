@@ -36,7 +36,7 @@ void Body::getNearest3BodyLoc(const std::vector<Body> &bodies, const unsigned cu
 		nearBodyLoc[i].dist = INT_MAX;// calcDist(bodies[i].getPosition().x - m_pos.x, bodies[i].getPosition().y - m_pos.y);
 		nearBodyLoc[i].x = -1;
 		nearBodyLoc[i].y = -1;
-		nearBodyLoc[i].idx = 0; // TODO:was -1 before, but segfault fricked me. will figure out later!
+		nearBodyLoc[i].idx = 0; // TODO:was -1 before, but segfault encounterd. Will figure out later.
 	}
 
 	/* put all the distances: */

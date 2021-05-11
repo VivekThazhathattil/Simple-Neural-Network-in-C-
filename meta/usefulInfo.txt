@@ -11,3 +11,16 @@
 		
 
 Fitness function
+
+> Revised inputs:
+	* 6 x (pos of 3 nearby bodies : x & y coords)
+	* 6 x (pos of 3 nearby pellets : x & y coords)
+	* 8 x (pos of 4 walls)
+	* 2 x (pos of present body)
+	* 1 x (radii of present body)
+	* 3 x (radii of 3 nearby bodies)
+		total = 26 (+ 1 bias neuron)
+> revised output:
+	* 1 x rotation angle (that will modify velocityDir)
+
+one hidden layer no. of neurons = avg(num_input, num_output) = 29/2 ~ 15
