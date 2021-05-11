@@ -25,6 +25,7 @@ class Render{
 		bool restartEnv;
 		
 		void updateState();
+		void updateCircles();
 		void drawNDisplay();
 		void resetRender();
 

@@ -1,6 +1,6 @@
 #include "include/env.h"
 
-double Env::initVel = 5;
+double Env::initVel = 0.2;
 double Env::initRad = 10;
 double Env::pelletWt = 2;
 
@@ -23,7 +23,7 @@ Env::Env( const std::vector<unsigned> &topology, const unsigned numBodies, const
 	assert(BR.x > 0);
 	assert(BR.y > 0);
 	for(unsigned pelletNum = 0; pelletNum < numPellets; ++pelletNum){
-		Position pos = {rand()%(BR.x - TL.x) + TL.x, rand()%(BR.y - TL.y) + TL.y};
+		Position pos = {rand()%int(BR.x - TL.x) + TL.x, rand()%int(BR.y - TL.y) + TL.y};
 		pelletPos.push_back(pos);
 	}
 
@@ -86,6 +86,12 @@ void Env::checkPelletConsumption(){
 
 void Env::changeBodyPosition(){
 	/* change each body position wrt to the output from the NN */
+	for(unsigned i = 0; i < bodies.size(); ++i){
+		Position pos;
+		pos.x = bodies[i].getPosition().x + (float)bodies[i].getVelocityMag() * bodies[i].getVelocityDir().x;
+		pos.y = bodies[i].getPosition().y + (float)bodies[i].getVelocityMag() * bodies[i].getVelocityDir().y;
+		bodies[i].setPosition(pos);
+	}
 }
 
 void Env::resetEnv(){
@@ -100,7 +106,7 @@ void Env::resetEnv(){
 	pelletPos.clear();
 	numPellets = rand()%(101 - numBodies) + numBodies; /* number of pellets atleast the same as number of bodies */
 	for(unsigned pelletNum = 0; pelletNum < numPellets; ++pelletNum){
-		Position pos = {rand()%(BR.x - TL.x) + TL.x, rand()%(BR.y - TL.y) + TL.y};
+		Position pos = {rand()%int(BR.x - TL.x) + TL.x, rand()%int(BR.y - TL.y) + TL.y};
 		pelletPos.push_back(pos);
 	}
 

@@ -5,7 +5,8 @@ double Body::velocityDecreaseRate = 1.0;
 
 Body::Body(const float vel, const float rad, const std::vector<unsigned> &topology,\
 	       	const Position &TL, const Position &BR) : net(topology){
-	setVelocity(vel);
+	setVelocityMag(vel);
+	setRandomVelDir();
 	setRadius(rad);
 	setSpawnPosition(TL, BR);
 	setColor();
@@ -15,7 +16,7 @@ Body::~Body() {}
 
 void Body::updateBody(const float pelletWt){
 	m_radius += radiusIncreaseRate * pelletWt;
-	m_velocity -=  velocityDecreaseRate * pelletWt;
+	m_velocityMag -=  velocityDecreaseRate * pelletWt;
 }
 
 void Body::setColor(){
@@ -25,8 +26,8 @@ void Body::setColor(){
 }
 
 void Body::setSpawnPosition(const Position &TL, const Position &BR){
-	m_pos = { rand()%(BR.x - TL.x) + TL.x ,\
-	       	 rand()%(BR.y - TL.y) + TL.y}; 
+	m_pos = { rand()%int(BR.x - TL.x - 10) + TL.x + 5 ,\
+	       	 rand()%int(BR.y - TL.y - 10) + TL.y + 5}; 
 //	std::cout << rand() <<  " " << rand() << std::endl;
 }
 void Body::getNearest3BodyLoc(const std::vector<Body> &bodies, const unsigned currBodyIdx){ /* set all dist to 0 initially */
@@ -99,9 +100,32 @@ void Body::getShortestDistanceToWalls(const Position &TL, const Position &BR){
 	nearWallLoc.push_back(BR.x - m_pos.x);
 	nearWallLoc.push_back(BR.y - m_pos.y);
 
-	for(unsigned i = 0; i < nearWallLoc.size(); ++i){
-		//std::cout << "wall loc : " << nearWallLoc[i] << std::endl;
-		assert(nearWallLoc[i] > 0);
-	}	
+//	for(unsigned i = 0; i < nearWallLoc.size(); ++i){
+//		//std::cout << "wall loc : " << nearWallLoc[i] << std::endl;
+//		assert(nearWallLoc[i] > 0);
+//	}	
 }
+void Body::setRandomVelDir(){
+	m_velocityDir.x =  static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+	m_velocityDir.y = static_cast <float> (rand()) / static_cast <float> (RAND_MAX); 
 
+	/* normalize both components */
+	float tempX = m_velocityDir.x;
+	m_velocityDir.x = m_velocityDir.x / sqrt(m_velocityDir.x * m_velocityDir.x + m_velocityDir.y * m_velocityDir.y);
+	m_velocityDir.y = m_velocityDir.y / sqrt(tempX * tempX + m_velocityDir.y * m_velocityDir.y);
+	switch(rand()%4){
+		case 0:
+			m_velocityDir.x = -m_velocityDir.x;
+			break;
+		case 1:
+			m_velocityDir.y = -m_velocityDir.y;
+			break;
+		case 2: 
+			m_velocityDir.x = -m_velocityDir.x;
+			m_velocityDir.y = -m_velocityDir.y;
+			break;
+		case 3:
+		default: 
+			break;
+	}
+}

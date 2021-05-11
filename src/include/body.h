@@ -15,7 +15,8 @@
 class Body{
 	private:
 		float m_radius; // mass and radius used interchangebly
-		float m_velocity;
+		float m_velocityMag; // magnitude of the body's velocity
+		Velocity m_velocityDir; // direction of the body's velocity : Norm(dir) = 1
 		Position m_pos; // each body has a position
 		unsigned m_color[3]; // for storing the rgb values
 		unsigned m_bodyIdx; // to identify the body by its number
@@ -37,12 +38,16 @@ class Body{
 		double nearBodyRadii [3];	
 		std::vector<unsigned> nearWallLoc;
 
-		void setVelocity(const float vel) { m_velocity = vel; }
-		float getVelocity() const { return m_velocity; }
+		void setVelocityMag(const float vel) { m_velocityMag = vel; }
+		float getVelocityMag() const { return m_velocityMag; }
+		void setVelocityDir(const Velocity vel) { m_velocityDir = vel; }
+		Velocity getVelocityDir() const { return m_velocityDir; }
 		void setRadius(const float rad){ m_radius = rad; }
 		float getRadius() const { return m_radius; }
+		void setRandomVelDir();
 
 		Position getPosition() const { return m_pos; }
+		void setPosition(const Position pos){ m_pos = pos; }
 		void updateBody(const float pelletWt);
 		void setBodyIdx(const float num) { m_bodyIdx = num; }
 		unsigned* getColor() { return m_color; }

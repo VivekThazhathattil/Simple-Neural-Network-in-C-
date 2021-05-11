@@ -88,6 +88,8 @@ void Render::updateState(){
 	env.checkBodyDeath(TL,BR);
 	env.checkPelletConsumption();
 	env.changeBodyPosition();
+	updateCircles();
+
 	if(showBodyLines)
 		showNearBodyLines();
 	if(showWallLines)
@@ -216,5 +218,12 @@ void Render::showNearPelletLines(){
 			m_srcPelletVertex.push_back(sf::Vector2f(pos0.x,pos0.y));
 			m_destPelletVertex.push_back(sf::Vector2f(pos1.x, pos1.y));
 		}
+	}
+}
+
+void Render::updateCircles(){
+	for(unsigned i = 0; i < env.bodies.size(); ++i){
+		Position pos = env.bodies[i].getPosition();
+		m_circles[i].setPosition(sf::Vector2f(pos.x, pos.y));
 	}
 }
