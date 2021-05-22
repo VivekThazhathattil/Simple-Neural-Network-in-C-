@@ -1,59 +1,16 @@
-./src/body.cpp: In member function ‘void Body::setSpawnPosition(const Position&, const Position&)’:
-./src/body.cpp:29:18: error: invalid operands of types ‘int’ and ‘float’ to binary ‘operator%’
-   29 |  m_pos = { rand()%(BR.x - TL.x - 10) + TL.x + 5 ,\
-      |            ~~~~~~^~~~~~~~~~~~~~~~~~~
-      |                |               |
-      |                int             float
-./src/body.cpp:30:17: error: invalid operands of types ‘int’ and ‘float’ to binary ‘operator%’
-   30 |           rand()%(BR.y - TL.y - 10) + TL.y + 5};
-      |           ~~~~~~^~~~~~~~~~~~~~~~~~~
-      |               |               |
-      |               int             float
-./src/body.cpp:30:47: error: no match for ‘operator=’ (operand types are ‘Position’ and ‘<brace-enclosed initializer list>’)
-   30 |           rand()%(BR.y - TL.y - 10) + TL.y + 5};
-      |                                               ^
-In file included from ./src/include/body.h:7,
-                 from ./src/body.cpp:1:
-./src/include/position.h:3:8: note: candidate: ‘constexpr Position& Position::operator=(const Position&)’
-    3 | struct Position{
-      |        ^~~~~~~~
-./src/include/position.h:3:8: note:   no known conversion for argument 1 from ‘<brace-enclosed initializer list>’ to ‘const Position&’
-./src/include/position.h:3:8: note: candidate: ‘constexpr Position& Position::operator=(Position&&)’
-./src/include/position.h:3:8: note:   no known conversion for argument 1 from ‘<brace-enclosed initializer list>’ to ‘Position&&’
-./src/env.cpp: In constructor ‘Env::Env(const std::vector<unsigned int>&, unsigned int, const Position&, const Position&)’:
-./src/env.cpp:26:25: error: invalid operands of types ‘int’ and ‘float’ to binary ‘operator%’
-   26 |   Position pos = {rand()%(BR.x - TL.x) + TL.x, rand()%(BR.y - TL.y) + TL.y};
-      |                   ~~~~~~^~~~~~~~~~~~~~
-      |                       |        |
-      |                       int      float
-./src/env.cpp:26:54: error: invalid operands of types ‘int’ and ‘float’ to binary ‘operator%’
-   26 |   Position pos = {rand()%(BR.x - TL.x) + TL.x, rand()%(BR.y - TL.y) + TL.y};
-      |                                                ~~~~~~^~~~~~~~~~~~~~
-      |                                                    |        |
-      |                                                    int      float
-./src/env.cpp: In member function ‘void Env::resetEnv()’:
-./src/env.cpp:112:25: error: invalid operands of types ‘int’ and ‘float’ to binary ‘operator%’
-  112 |   Position pos = {rand()%(BR.x - TL.x) + TL.x, rand()%(BR.y - TL.y) + TL.y};
-      |                   ~~~~~~^~~~~~~~~~~~~~
-      |                       |        |
-      |                       int      float
-./src/env.cpp:112:54: error: invalid operands of types ‘int’ and ‘float’ to binary ‘operator%’
-  112 |   Position pos = {rand()%(BR.x - TL.x) + TL.x, rand()%(BR.y - TL.y) + TL.y};
-      |                                                ~~~~~~^~~~~~~~~~~~~~
-      |                                                    |        |
-      |                                                    int      float
-./src/render.cpp: In member function ‘void Render::showNearBodyLines()’:
-./src/render.cpp:170:41: warning: narrowing conversion of ‘((Render*)this)->Render::env.Env::bodies.std::vector<Body>::operator[](((std::vector<Body>::size_type)i)).Body::nearBodyLoc[j].NearDet::x’ from ‘int’ to ‘float’ [-Wnarrowing]
-  170 |    pos1 = {env.bodies[i].nearBodyLoc[j].x, env.bodies[i].nearBodyLoc[j].y};
-      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
-./src/render.cpp:170:73: warning: narrowing conversion of ‘((Render*)this)->Render::env.Env::bodies.std::vector<Body>::operator[](((std::vector<Body>::size_type)i)).Body::nearBodyLoc[j].NearDet::y’ from ‘int’ to ‘float’ [-Wnarrowing]
-  170 |    pos1 = {env.bodies[i].nearBodyLoc[j].x, env.bodies[i].nearBodyLoc[j].y};
-      |                                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
-./src/render.cpp: In member function ‘void Render::showNearPelletLines()’:
-./src/render.cpp:217:43: warning: narrowing conversion of ‘((Render*)this)->Render::env.Env::bodies.std::vector<Body>::operator[](((std::vector<Body>::size_type)i)).Body::nearPelletLoc[j].NearDet::x’ from ‘int’ to ‘float’ [-Wnarrowing]
-  217 |    pos1 = {env.bodies[i].nearPelletLoc[j].x, env.bodies[i].nearPelletLoc[j].y};
-      |            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
-./src/render.cpp:217:77: warning: narrowing conversion of ‘((Render*)this)->Render::env.Env::bodies.std::vector<Body>::operator[](((std::vector<Body>::size_type)i)).Body::nearPelletLoc[j].NearDet::y’ from ‘int’ to ‘float’ [-Wnarrowing]
-  217 |    pos1 = {env.bodies[i].nearPelletLoc[j].x, env.bodies[i].nearPelletLoc[j].y};
-      |                                              ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+./src/env.cpp: In member function ‘void Env::feedInput()’:
+./src/env.cpp:162:55: error: request for member ‘x’ in ‘((Env*)this)->Env::bodies.std::vector<Body>::operator[](((std::vector<Body>::size_type)i)).Body::nearWallLoc.std::vector<unsigned int>::operator[](((std::vector<unsigned int>::size_type)j))’, which is of non-class type ‘__gnu_cxx::__alloc_traits<std::allocator<unsigned int>, unsigned int>::value_type’ {aka ‘unsigned int’}
+  162 |    inputVals.push_back(float(bodies[i].nearWallLoc[j].x)/normalizer);
+      |                                                       ^
+./src/env.cpp:163:55: error: request for member ‘y’ in ‘((Env*)this)->Env::bodies.std::vector<Body>::operator[](((std::vector<Body>::size_type)i)).Body::nearWallLoc.std::vector<unsigned int>::operator[](((std::vector<unsigned int>::size_type)j))’, which is of non-class type ‘__gnu_cxx::__alloc_traits<std::allocator<unsigned int>, unsigned int>::value_type’ {aka ‘unsigned int’}
+  163 |    inputVals.push_back(float(bodies[i].nearWallLoc[j].y)/normalizer);
+      |                                                       ^
+./src/env.cpp: In member function ‘double Env::getOutputFromNN(unsigned int)’:
+./src/env.cpp:183:2: error: ‘feedIn’ was not declared in this scope; did you mean ‘feedInput’?
+  183 |  feedIn
+      |  ^~~~~~
+      |  feedInput
+./src/env.cpp:185:1: warning: no return statement in function returning non-void [-Wreturn-type]
+  185 | }
+      | ^
 make: *** [Makefile:2: build] Error 1

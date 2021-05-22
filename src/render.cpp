@@ -86,8 +86,10 @@ void Render::updateState(){
 	 * if two or more circles' centres coincide, remove the consumed circles.
 	 */
 	if(env.checkGenExpiration()){
+		env.getBestNN();
 		env.resetEnv();
 		resetRender();
+		env.setBestNN();
 	}
 
 	if(restartEnv){
@@ -96,6 +98,7 @@ void Render::updateState(){
 		resetRender();
 	}
 	env.getBodyInputs(TL,BR);
+	env.outputToDirs(); // use NN output to change the body's velocity direction.
 	env.killOffBoundBodies();
 	env.checkPelletConsumption();
 	env.changeBodyPosition();
@@ -194,7 +197,7 @@ void Render::showNearBodyLines(){
 			for( unsigned j = 0; j < 3; ++j){
 				/* check if the body being connected to is alive; if not don't draw connection line */
 				if(env.bodies[ env.bodies[i].nearBodyLoc[j].idx ].aliveStatus && env.bodies[i].nearBodyLoc[j].dist != INT_MAX){
-					pos1 = {env.bodies[i].nearBodyLoc[j].x, env.bodies[i].nearBodyLoc[j].y};
+					pos1 = {float(env.bodies[i].nearBodyLoc[j].x), float(env.bodies[i].nearBodyLoc[j].y)};
 					m_srcBodyVertex.push_back(sf::Vector2f(pos0.x,pos0.y));
 					m_destBodyVertex.push_back(sf::Vector2f(pos1.x, pos1.y));
 				}
@@ -246,7 +249,7 @@ void Render::showNearPelletLines(){
 		if(env.bodies[i].aliveStatus){
 			pos0 = env.bodies[i].getPosition();
 			for( unsigned j = 0; j < 3; ++j){
-				pos1 = {env.bodies[i].nearPelletLoc[j].x, env.bodies[i].nearPelletLoc[j].y};
+				pos1 = {float(env.bodies[i].nearPelletLoc[j].x), float(env.bodies[i].nearPelletLoc[j].y)};
 				m_srcPelletVertex.push_back(sf::Vector2f(pos0.x,pos0.y));
 				m_destPelletVertex.push_back(sf::Vector2f(pos1.x, pos1.y));
 			}

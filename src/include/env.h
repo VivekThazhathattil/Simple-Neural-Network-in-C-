@@ -10,6 +10,7 @@
 #include <cstdlib> /* srand, rand */
 #include <time.h> /* time */
 #include <iostream>
+#include <cmath>
 
 class Env{
 	private:
@@ -20,10 +21,13 @@ class Env{
 		void setWalls(const Position &TL, const Position &BR); // this function sets up the walls in the env
 		void getWalls_stub();
 		void updateClockTime() { ++clockTime; }
+		float getBodyToPelletDist(const float &x0, const float &y0, const float &x1, const float &y1);
 	public:
-		unsigned numPellets;
-		std::vector<Body> bodies;
+		unsigned numPellets; // TODO: made the mistake of not defining pellets as an object; find a way around or rewrite!
 		std::vector<Position> pelletPos;
+		std::vector<bool> pelletAliveStatus;
+
+		std::vector<Body> bodies;
 		unsigned numAliveBodies;
 
 		static double initVel; // initial velocity of the bodies
@@ -45,4 +49,10 @@ class Env{
 		void changeBodyPosition(); 
 		void resetEnv();
 		void killOffBoundBodies();
+		void feedInput();
+		double getOutputFromNN(const unsigned bodyIdx);
+		void getBestNN();
+		void setBestNN();
+		void mutateNN();
+		void outputToDirs();
 };

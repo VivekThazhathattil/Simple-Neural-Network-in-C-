@@ -1,4 +1,5 @@
 #define WINDOW_SIZE_X 800
 #define WINDOW_SIZE_Y 700
 
-#define EXPIRE_TIME 4000
+#define EXPIRE_TIME 12000 // 4000
+#define MUTATION_THRES 80

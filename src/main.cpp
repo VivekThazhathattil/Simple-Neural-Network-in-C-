@@ -4,8 +4,8 @@
 int main(){
 	
 	std::vector<unsigned> topology;
-	topology.push_back(3);
-	topology.push_back(2);
+	topology.push_back(22);
+	topology.push_back(15);
 	topology.push_back(1);
 
 	unsigned numBodies = 30;

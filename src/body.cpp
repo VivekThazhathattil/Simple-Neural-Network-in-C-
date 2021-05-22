@@ -132,3 +132,14 @@ void Body::setRandomVelDir(){
 			break;
 	}
 }
+
+void Body::feedInput(const std::vector<double> inputVals){
+	net.feedForward(inputVals);
+}
+
+double Body::getOutput(){
+	std::vector<double> resultVals;
+	net.getResults(resultVals);
+	return resultVals.back();
+	// lets not have a targetVal and backpropagation here
+}

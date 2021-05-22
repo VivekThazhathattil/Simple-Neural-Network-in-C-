@@ -83,8 +83,18 @@ void Env::getBodyInputs(const Position& TL, const Position &BR){
 void Env::checkPelletConsumption(){
 	/* check if the pellets have been consumed by the bodies; once fully consumed, the pellets never regenerate */
 	/* we do not delete the pellets, rather we set the pellet position of consumed pellets to INT_MAX */
+	for(unsigned i = 0; i < bodies.size(); ++i){
+		float dist = getBodyToPelletDist(bodies[i].getPosition().x, bodies[i].getPosition().y ,\
+				bodies[i].nearPelletLoc[0].x , bodies[i].nearPelletLoc[0].y);
+		if(dist < bodies[i].getRadius() - pelletWt){
+			//complete this TODO
+		}
+	}
 }
 
+float Env::getBodyToPelletDist(const float &x0, const float &y0, const float &x1, const float &y1){
+return sqrt( (x0-x1)*(x0-x1) + (y0-y1)*(y0-y1));
+}
 void Env::changeBodyPosition(){
 	/* change each body position wrt to the output from the NN */
 	for(unsigned i = 0; i < bodies.size(); ++i){
@@ -129,4 +139,75 @@ void Env::killOffBoundBodies(){
 		}
 
 	}	
+}
+
+void Env::feedInput(){
+	std::vector<double> inputVals;
+	for(unsigned i = 0; i < bodies.size(); ++i){
+		inputVals.clear();
+		float normalizer = sqrt(BR.x*BR.x + BR.y*BR.y);
+		/* nearBodies locations */
+		/* normalize position and radii with sqrt(BR.x^2 + BR.y^2) */
+		for(unsigned j = 0; j < 3; ++j){
+			inputVals.push_back(float(bodies[i].nearBodyLoc[j].x)/normalizer);
+			inputVals.push_back(float(bodies[i].nearBodyLoc[j].y)/normalizer);
+		}
+		/* near pellet locations */
+		for(unsigned j = 0; j < 3; ++j){
+			inputVals.push_back(float(bodies[i].nearPelletLoc[j].x)/normalizer);
+			inputVals.push_back(float(bodies[i].nearPelletLoc[j].y)/normalizer);
+		}
+		/* near walls locations */
+		for(unsigned j = 0; j < bodies[i].nearWallLoc.size(); ++j){
+			inputVals.push_back(float(bodies[i].nearWallLoc[j])/normalizer);
+		}
+		/* present body position*/
+		inputVals.push_back(float(bodies[i].getPosition().x)/normalizer);
+		inputVals.push_back(float(bodies[i].getPosition().y)/normalizer);
+
+		/* present body radius */
+		inputVals.push_back(float(bodies[i].getRadius())/normalizer);
+
+		/* near bodies radii */
+		for(unsigned j = 0; j < 3; ++j){
+			inputVals.push_back(float(bodies[bodies[i].nearBodyLoc[j].idx].getRadius())/normalizer);
+		}
+
+		/* feed the inputVals to the corresponding function in body */
+		bodies[i].feedInput(inputVals);
+	}
+}
+
+double Env::getOutputFromNN(const unsigned bodyIdx){
+	feedInput();
+	return bodies[bodyIdx].getOutput();
+}
+
+void Env::getBestNN(){
+
+}
+
+void Env::setBestNN(){
+	mutateNN(); // for each body
+}
+
+void Env::mutateNN(){
+}
+
+void Env::outputToDirs(){
+	for(unsigned i = 0; i < bodies.size(); ++i){
+		double output = getOutputFromNN(i);
+//		std::cout << " output raw = " << output << std::endl;
+		if (output > 1) 
+			output = 1.0;
+		else if (output < -1) 
+			output = -1.0;
+		/* convert this output to usable format i.e. rotation in rad  : [-1..1] -> [-PI..PI]*/
+		output = M_PI * output; // convert to radians
+		Velocity vel;
+		vel.x = cos(output);
+		vel.y = sin(output);
+//		std::cout << "output = " << output << " vel.x = " << vel.x << " vel.y = " << vel.y << std::endl;
+		bodies[i].setVelocityDir(vel);
+	}
 }

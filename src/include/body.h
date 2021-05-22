@@ -57,4 +57,6 @@ class Body{
 		void getNearest3PelletsLoc(const std::vector<Position> &pelletPos, const unsigned numPellets);
 		void getNearest3BodyRadii(const std::vector<Body> &bodies);
 		void getShortestDistanceToWalls(const Position &TL, const Position &BR);
+		void feedInput(const std::vector<double> inputVals);
+		double getOutput();
 };
